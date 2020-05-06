@@ -13,7 +13,6 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
     ArrayList<Position> start;
     ArrayList<Position> end;
 
-    //
     public ServerStrategySolveSearchProblem() {
         this.amount = 0;
         this.size = new ArrayList<Position>();
