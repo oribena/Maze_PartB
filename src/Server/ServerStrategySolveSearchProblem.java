@@ -6,13 +6,14 @@ import algorithms.search.Solution;
 
 import java.io.*;
 import java.util.ArrayList;
-
+//
 public class ServerStrategySolveSearchProblem implements IServerStrategy {
     int amount;
     ArrayList<Position> size;
     ArrayList<Position> start;
     ArrayList<Position> end;
 //
+
     public ServerStrategySolveSearchProblem() {
         this.amount = 0;
         this.size = new ArrayList<Position>();
