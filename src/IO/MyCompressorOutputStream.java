@@ -1,6 +1,7 @@
 package IO;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
@@ -32,11 +33,12 @@ public class MyCompressorOutputStream extends OutputStream {
         for (int i = 25; i < bytes.length; i++) {
             if (count < 32) {
                 test+=Byte.toString(bytes[i]);
+                count++;
             }
             //after 32 bytes, add and start over
-            if (count==31){
+            if (count==32){
 
-                int dec = (int)Long.parseUnsignedLong(test,2);
+                int dec = (int)Long.parseLong(test,2);
                 byte[] currFinalBytes = convertIntToByte(dec);
 
                 int j=0;
@@ -47,18 +49,25 @@ public class MyCompressorOutputStream extends OutputStream {
                 }
                 loc = loc+4;
                 count=0;
+                test="";
                 //if there are less then 32 left
-                if (left<32){
+                if (left==finalBytes.length-loc && left!=0){
                     finalBytes[24]=(byte)left;
                     for (int k = i+1; k < bytes.length; k++) {
                         finalBytes[loc] = bytes[k];
                         loc++;
                     }
+                    break;
                 }
             }
-            count++;
         }
-        out.write(finalBytes);
+        if( out instanceof ObjectOutputStream){
+            ((ObjectOutputStream) out).writeObject((finalBytes));
+        }
+        else
+            out.write(finalBytes);
+        out.flush();
+        out.close();
     }
 
 

@@ -9,33 +9,35 @@ import java.util.logging.LogManager;
 public class ServerStrategyGenerateMaze implements IServerStrategy {
 
 
-    private LogManager Configurations; //////////////////////
+    //private LogManager Configurations; //////////////////////
 
-    public void serverStrategy(InputStream in, OutputStream out) {
+    @Override
+    public void clientHandler(InputStream in, OutputStream out) throws IOException {
         try {
-            ObjectInputStream from = new ObjectInputStream(in);
-            ObjectOutputStream to = new ObjectOutputStream(out);
-            to.flush();
+            ObjectInputStream fromClient = new ObjectInputStream(in);
+            ObjectOutputStream toClient = new ObjectOutputStream(out);
+            toClient.flush();
 
-            int[] RowsCols = (int[]) from.readObject();
+            int[] RowsCols = (int[]) fromClient.readObject();
             int rows = RowsCols[0];
             int cols = RowsCols[1];
 
-            AMazeGenerator mazeGenerator;
-            if (Configurations.getProperty("MazeGenerator")=="SimpleMazeGenerator") //TODO: check confi
-                mazeGenerator = new SimpleMazeGenerator();
-            else
-                mazeGenerator = new MyMazeGenerator();
+            AMazeGenerator mazeGenerator= new MyMazeGenerator();
+//            if (Configurations.getProperty("MazeGenerator")=="SimpleMazeGenerator") //TODO: check confi
+//                mazeGenerator = new SimpleMazeGenerator();
+//            else
+//                mazeGenerator = new MyMazeGenerator();
 
             Maze maze = mazeGenerator.generate(rows, cols);
 
             /// TODO: check all of this
-            OutputStream outByteArray = new ByteArrayOutputStream();
-            OutputStream compressed = new MyCompressorOutputStream(outByteArray);
+           // OutputStream outByteArray = new ByteArrayOutputStream();
+            OutputStream compressed = new MyCompressorOutputStream(toClient);
             compressed.write(maze.toByteArray());
-            ByteArrayOutputStream ByteArrayToSend = (ByteArrayOutputStream) outByteArray;
-            byte[] toSend = ByteArrayToSend.toByteArray();
-            to.writeObject(toSend);
+            System.out.print("wooohoooo\n");
+//            ByteArrayOutputStream ByteArrayToSend = (ByteArrayOutputStream) outByteArray;
+//            byte[] toSend = ByteArrayToSend.toByteArray();
+//            toClient.writeObject(toSend);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {

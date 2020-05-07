@@ -36,9 +36,10 @@ public class MyDecompressorInputStream extends InputStream {
         for (int i = 25; i < bytes.length; i++) {
             if (count<4) {
                 curr4Bytes[count] = bytes[i];
+                count++;
             }
             //after 4 bytes, add and start over
-            if (count==3){
+            if (count==4){
                 int currDecNum = convertByteToInt(curr4Bytes);
                 String binaryNum = Integer.toBinaryString(currDecNum);
                 String currBinaryNum = "";
@@ -61,6 +62,7 @@ public class MyDecompressorInputStream extends InputStream {
                 }
                 loc = loc+32;
                 count=0;
+                currBinaryNum="";
                 //if there are less then 32 left
                 if (left==finalBytes.length-loc){ /// wrong if!!!!!
                     for (int k = i+1; k < bytes.length; k++) {
@@ -70,7 +72,6 @@ public class MyDecompressorInputStream extends InputStream {
                     return 0;
                 }
             }
-            count++;
         }
         return 0;
     }

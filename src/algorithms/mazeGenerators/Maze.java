@@ -1,9 +1,10 @@
 package algorithms.mazeGenerators;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
-public class Maze {
+public class Maze implements Serializable {
 
     private int[][] mat;
     private Position start;
