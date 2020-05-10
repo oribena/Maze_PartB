@@ -30,8 +30,32 @@ public class Server {
         this.serverStrategy = serverStrategy;
         this.stop = false;
         this.threadPoolExecutor=(ThreadPoolExecutor) Executors.newCachedThreadPool();
+/////////////////////////////////////// TODO: change
+        try{
+            if (isNumeric(Configurations.getProperty("server_threadPoolSize"))) {
+                int temp = Integer.parseInt(Configurations.getProperty("server_threadPoolSize"));
+                if (temp > 0)
+                    threadPoolExecutor.setCorePoolSize(temp);
+            }
+            else
+                threadPoolExecutor.setCorePoolSize(8);
+        }catch (Exception e) {
+        }
     }
 
+    private static boolean isNumeric(String str)
+    {
+        try
+        {
+            double d = Double.parseDouble(str);
+        }
+        catch(NumberFormatException nfe)
+        {
+            return false;
+        }
+        return true;
+    }
+    /////////////////////////////////////////////////////
     public void start() {
         Thread t = new Thread( () -> {  runServer();  });
         t.start();
