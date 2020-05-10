@@ -19,14 +19,14 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 public class Server {
     private int port;//The port
-    private int interval;//The port
+    private int listeningInterval;//The port
     private IServerStrategy serverStrategy;//The strategy for handling clients
     private volatile boolean stop;
     private ThreadPoolExecutor threadPoolExecutor;
 
-    public Server(int port, int interval, IServerStrategy serverStrategy) {
+    public Server(int port, int listeningInterval, IServerStrategy serverStrategy) {
         this.port = port;
-        this.interval=interval;
+        this.listeningInterval =listeningInterval;
         this.serverStrategy = serverStrategy;
         this.stop = false;
         this.threadPoolExecutor=(ThreadPoolExecutor) Executors.newCachedThreadPool();
@@ -39,7 +39,7 @@ public class Server {
     private void runServer() {
         try {
             ServerSocket server = new ServerSocket(port);
-            server.setSoTimeout(interval);
+            server.setSoTimeout(listeningInterval);
             System.out.println(String.format("Server started! (port: %s)", port));
             while (!stop) {
                 try {
@@ -50,20 +50,14 @@ public class Server {
                     }) );
 
                 } catch (SocketTimeoutException e) {
-                    // LOG.debug("SocketTimeout - No clients pending!");
                 }
             }
             threadPoolExecutor.shutdown();
             server.close();
         } catch (IOException e) {
-            // LOG.error("IOException", e);
         }
     }
 
-    /**
-     * This function receives client socket and handles it
-     * @param clientSocket - The client socket
-     */
     private void clientHandle(Socket clientSocket) {
         try {
             System.out.println("client exepted");

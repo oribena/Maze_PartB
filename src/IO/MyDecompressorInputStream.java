@@ -64,7 +64,7 @@ public class MyDecompressorInputStream extends InputStream {
                 count=0;
                 currBinaryNum="";
                 //if there are less then 32 left
-                if (left==finalBytes.length-loc){ /// wrong if!!!!!
+                if (left==finalBytes.length-loc && left!=0){ /// wrong if!!!!!
                     for (int k = i+1; k < bytes.length; k++) {
                         finalBytes[loc] = bytes[k];
                         loc++;

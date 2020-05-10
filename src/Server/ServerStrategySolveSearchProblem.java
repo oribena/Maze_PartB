@@ -1,7 +1,9 @@
 package Server;
 
 import algorithms.mazeGenerators.Maze;
+import algorithms.mazeGenerators.MyMazeGenerator;
 import algorithms.mazeGenerators.Position;
+import algorithms.mazeGenerators.SimpleMazeGenerator;
 import algorithms.search.*;
 
 import java.io.*;
@@ -84,7 +86,14 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ISearchingAlgorithm solver = new BestFirstSearch();
+        ISearchingAlgorithm solver;
+
+        if (Configurations.getProperty("SearchingAlgorithm")=="BestFirstSearch")
+            solver = new BestFirstSearch();
+        else if (Configurations.getProperty("SearchingAlgorithm")=="DepthFirstSearch")
+            solver = new DepthFirstSearch();
+        else
+            solver = new BreadthFirstSearch();
 
 //        switch (Configurations.getProperty("SearchingAlgorithm")) {
 //            case "BestFirstSearch":
@@ -100,6 +109,7 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
 //                solver = new BreadthFirstSearch();
 //                break;
 //        }
+
         SearchableMaze newMaze=new SearchableMaze(maze);
         Solution solution= solver.solve(newMaze);
         try {

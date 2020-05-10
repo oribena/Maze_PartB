@@ -6,7 +6,7 @@ public class SimpleMazeGenerator extends AMazeGenerator {
     @Override
     public Maze generate(int rows, int columns) {
         int[][] mat = new int[rows][columns];
-        //if the Maze is 2XM - EmptyMaze
+        //if the Maze is 3X3 - EmptyMaze
         if ((rows < 3 || columns < 3) || (rows == 3 && columns == 3)) {
             for (int i=0; i<rows; i++ ){
                 for (int j=0; j<columns; j++){

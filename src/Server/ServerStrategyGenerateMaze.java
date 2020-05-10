@@ -8,9 +8,6 @@ import java.util.logging.LogManager;
 
 public class ServerStrategyGenerateMaze implements IServerStrategy {
 
-
-    //private LogManager Configurations; //////////////////////
-
     @Override
     public void clientHandler(InputStream in, OutputStream out) throws IOException {
         try {
@@ -22,11 +19,24 @@ public class ServerStrategyGenerateMaze implements IServerStrategy {
             int rows = RowsCols[0];
             int cols = RowsCols[1];
 
-            AMazeGenerator mazeGenerator= new MyMazeGenerator();
-//            if (Configurations.getProperty("MazeGenerator")=="SimpleMazeGenerator") //TODO: check confi
-//                mazeGenerator = new SimpleMazeGenerator();
-//            else
-//                mazeGenerator = new MyMazeGenerator();
+            AMazeGenerator mazeGenerator;
+            if (Configurations.getProperty("MazeGenerator")=="SimpleMazeGenerator")
+                mazeGenerator = new SimpleMazeGenerator();
+            else
+                mazeGenerator = new MyMazeGenerator();
+
+//            AMazeGenerator mazeGenerator;
+//            switch (Configurations.getProperty("MazeGenerator")) {
+//                case "MyMazeGenerator":
+//                    mazeGenerator = new MyMazeGenerator();
+//                    break;
+//                case "SimpleMazeGenerator":
+//                    mazeGenerator = new SimpleMazeGenerator();
+//                    break;
+//                default:
+//                    mazeGenerator = new MyMazeGenerator();
+//                    break;
+//            }
 
             Maze maze = mazeGenerator.generate(rows, cols);
 

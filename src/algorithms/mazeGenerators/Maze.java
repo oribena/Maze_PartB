@@ -65,7 +65,7 @@ public class Maze implements Serializable {
         int k = 25;
         for (int i = 0; i < rows; i++) {
             for (j = 0; j < cols; j++) {
-                mat[i][j] = (byteArray[k]);  ////TODO: check
+                mat[i][j] = (byteArray[k]);
                 k++;
             }
         }
