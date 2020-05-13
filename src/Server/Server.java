@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -22,61 +23,46 @@ public class Server {
     private int listeningInterval;//The port
     private IServerStrategy serverStrategy;//The strategy for handling clients
     private volatile boolean stop;
-    private ThreadPoolExecutor threadPoolExecutor;
+    //private ThreadPoolExecutor threadPoolExecutor;
+    private ExecutorService executor;
+    int threadPoolSize;
 
     public Server(int port, int listeningInterval, IServerStrategy serverStrategy) {
         this.port = port;
-        this.listeningInterval =listeningInterval;
+        this.listeningInterval = listeningInterval;
         this.serverStrategy = serverStrategy;
         this.stop = false;
-        this.threadPoolExecutor=(ThreadPoolExecutor) Executors.newCachedThreadPool();
-/////////////////////////////////////// TODO: change
-        try{
-            if (isNumeric(Configurations.getProperty("server_threadPoolSize"))) {
-                int temp = Integer.parseInt(Configurations.getProperty("server_threadPoolSize"));
-                if (temp > 0)
-                    threadPoolExecutor.setCorePoolSize(temp);
-            }
-            else
-                threadPoolExecutor.setCorePoolSize(8);
-        }catch (Exception e) {
-        }
     }
 
-    private static boolean isNumeric(String str)
-    {
-        try
-        {
-            double d = Double.parseDouble(str);
-        }
-        catch(NumberFormatException nfe)
-        {
-            return false;
-        }
-        return true;
-    }
-    /////////////////////////////////////////////////////
     public void start() {
         Thread t = new Thread( () -> {  runServer();  });
         t.start();
     }
     private void runServer() {
         try {
+            String temp = Configurations.getProperty("Server.threadPoolSize");
+            if (temp != null) {
+                 threadPoolSize = Integer.parseInt(Configurations.getProperty("Server.threadPoolSize"));
+                 executor = Executors.newFixedThreadPool(threadPoolSize);
+            }
+            else
+               executor = Executors.newFixedThreadPool(5);
+
             ServerSocket server = new ServerSocket(port);
             server.setSoTimeout(listeningInterval);
-            System.out.println(String.format("Server started! (port: %s)", port));
+            //System.out.println(String.format("Server started! (port: %s)", port));
             while (!stop) {
                 try {
                     Socket clientSocket = server.accept(); // blocking call
-                    System.out.println("Client excepted:"+clientSocket.toString());
-                    threadPoolExecutor.execute(new Thread(() -> {
+                    //System.out.println("Client excepted:"+clientSocket.toString());
+                    executor.execute(new Thread(() -> {
                         clientHandle(clientSocket);
                     }) );
 
                 } catch (SocketTimeoutException e) {
                 }
             }
-            threadPoolExecutor.shutdown();
+            executor.shutdown();
             server.close();
         } catch (IOException e) {
         }
@@ -84,8 +70,8 @@ public class Server {
 
     private void clientHandle(Socket clientSocket) {
         try {
-            System.out.println("client exepted");
-            System.out.println("Handling client with socket:" +clientSocket.toString());
+            //System.out.println("client exepted");
+            //System.out.println("Handling client with socket:" +clientSocket.toString());
             InputStream inFromClient = clientSocket.getInputStream();
             OutputStream outToClient = clientSocket.getOutputStream();
             this.serverStrategy.clientHandler(inFromClient, outToClient);
@@ -99,7 +85,7 @@ public class Server {
     }
     public void stop()
     {
-        System.out.println("The server has stopped!");
+        //System.out.println("The server has stopped!");
         this.stop = true;
     }
 }
