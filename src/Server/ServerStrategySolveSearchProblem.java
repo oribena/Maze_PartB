@@ -11,18 +11,11 @@ import java.util.ArrayList;
 //
 public class ServerStrategySolveSearchProblem implements IServerStrategy {
     int amount;
-//    ArrayList<Position> size;
-//    ArrayList<Position> start;
-//    ArrayList<Position> end;
     ArrayList<Position[]> startEndSize;
-//
 
     public ServerStrategySolveSearchProblem() {
         this.amount = 0;
         startEndSize = new ArrayList<Position[]>();
-//        this.size = new ArrayList<Position>();
-//        this.start = new ArrayList<Position>();
-//        this.end = new ArrayList<Position>();
     }
 
 
@@ -52,6 +45,8 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
     private Solution solFound(Maze maze) throws IOException {
         try {
             String tempDirectoryPath = System.getProperty("java.io.tmpdir");
+            //System.out.println(tempDirectoryPath);
+
             for (int i = 0; i < startEndSize.size(); i++) {
                 Position currSize = new Position(maze.getNumOfRows(), maze.getNumOfColumns());
                 boolean equalStart = maze.getStartPosition().equals(startEndSize.get(i)[0]);
