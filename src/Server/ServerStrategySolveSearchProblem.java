@@ -8,7 +8,7 @@ import algorithms.search.*;
 
 import java.io.*;
 import java.util.ArrayList;
-//
+
 public class ServerStrategySolveSearchProblem implements IServerStrategy {
     int amount;
     ArrayList<Position[]> startEndSize;
@@ -33,7 +33,6 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
                 sol = newSol(maze);
             }
             to.writeObject(sol);
-            //TODO delete one of them
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {

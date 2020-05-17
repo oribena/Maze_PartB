@@ -10,20 +10,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-    /*
-    private int port;
-    private int listeningInterval;
-    private IServerStrategy serverStrategy;
-    private volatile boolean stop;
-    private ThreadPoolExecutor threadPool;
-    */
 
 public class Server {
     private int port;//The port
     private int listeningInterval;//The port
     private IServerStrategy serverStrategy;//The strategy for handling clients
     private volatile boolean stop;
-    //private ThreadPoolExecutor threadPoolExecutor;
     private ExecutorService executor;
     int threadPoolSize;
 
