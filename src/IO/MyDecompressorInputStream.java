@@ -17,10 +17,11 @@ public class MyDecompressorInputStream extends InputStream {
         return 0;
     }
 
-    public int read(byte[] finalBytes) throws IOException {
+    @Override
+    public int read(byte[] b) throws IOException {
         //The size of the compress array
-        int left = (finalBytes.length-25)%32; //what's left in the end and we can't compress
-        byte[] bytes = new byte[25+left+((finalBytes.length-25-left)/8)];
+        int left = (b.length-25)%32; //what's left in the end and we can't compress
+        byte[] bytes = new byte[25+left+((b.length-25-left)/8)];
         try {
             in.read(bytes);
         } catch (Exception var8) {
@@ -30,9 +31,9 @@ public class MyDecompressorInputStream extends InputStream {
 
         //add the first 24 bytes as is
         for (int i = 0; i <24 ; i++) {
-            finalBytes[i] = bytes[i];
+            b[i] = bytes[i];
         }
-        finalBytes[24] = (byte) (0); //empty for left
+        b[24] = (byte) (0); //empty for left
         int loc = 25;
         byte[] curr4Bytes = new byte[4];
         int count = 0;
@@ -58,19 +59,27 @@ public class MyDecompressorInputStream extends InputStream {
                 currBinaryNum +=binaryNum;
 
                 int j=loc;
-                String[] temp = currBinaryNum.split("");
+                /*String[] temp = currBinaryNum.split("");
                 //add to final bytes array the compressed bytes
                 for (String item: temp) {
-                    finalBytes[j] = Byte.parseByte(item);
+                    b[j] = Byte.parseByte(item);
+                    j++;
+                }*/
+
+                for (int k = 0; k < currBinaryNum.length(); k++) {
+                    String temp2 = ""+currBinaryNum.charAt(k);
+                    int digit = Integer.parseInt(temp2);
+                    b[j] = (byte) digit;
                     j++;
                 }
+
                 loc = loc+32;
                 count=0;
                 currBinaryNum="";
                 //if there are less then 32 left
-                if (left==finalBytes.length-loc && left!=0){
+                if (left==b.length-loc && left!=0){
                     for (int k = i+1; k < bytes.length; k++) {
-                        finalBytes[loc] = bytes[k];
+                        b[loc] = bytes[k];
                         loc++;
                     }
                     return 0;

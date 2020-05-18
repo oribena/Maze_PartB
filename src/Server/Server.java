@@ -25,8 +25,8 @@ public class Server {
         this.listeningInterval = listeningInterval;
         this.serverStrategy = serverStrategy;
         this.stop = false;
-        threadPoolSize = Integer.parseInt(Configurations.getProperty("Server.threadPoolSize"));
-        executor = Executors.newFixedThreadPool(threadPoolSize);
+        this.threadPoolSize = Integer.parseInt(Configurations.getProperty("Server.threadPoolSize"));
+        this.executor = Executors.newFixedThreadPool(threadPoolSize);
     }
 
     public void start() {
