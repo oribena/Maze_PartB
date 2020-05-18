@@ -23,10 +23,17 @@ public class RunCommunicateWithServers {
         Server solveSearchProblemServer = new Server(5401, 1000, new ServerStrategySolveSearchProblem());
         //Server stringReverserServer = new Server(5402, 1000, new ServerStrategyStringReverser());
         //Starting servers
+        solveSearchProblemServer.start();
+        mazeGeneratingServer.start();
+
         for (int i = 0; i < 2; i++) {
-            solveSearchProblemServer.start();
-            mazeGeneratingServer.start();
             CommunicateWithServer_MazeGenerating();
+            CommunicateWithServer_MazeGenerating();
+            CommunicateWithServer_MazeGenerating();
+            CommunicateWithServer_MazeGenerating();
+            CommunicateWithServer_SolveSearchProblem();
+            CommunicateWithServer_SolveSearchProblem();
+            CommunicateWithServer_SolveSearchProblem();
             CommunicateWithServer_SolveSearchProblem();
         }
             mazeGeneratingServer.stop();

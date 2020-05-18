@@ -25,8 +25,7 @@ public class Server {
         this.listeningInterval = listeningInterval;
         this.serverStrategy = serverStrategy;
         this.stop = false;
-        this.threadPoolSize = Integer.parseInt(Configurations.getProperty("Server.threadPoolSize"));
-        this.executor = Executors.newFixedThreadPool(threadPoolSize);
+
     }
 
     public void start() {
@@ -43,6 +42,8 @@ public class Server {
             else
                executor = Executors.newFixedThreadPool(5);*/
 
+            this.threadPoolSize = Integer.parseInt(Configurations.getProperty("Server.threadPoolSize"));
+            this.executor = Executors.newFixedThreadPool(threadPoolSize);
             ServerSocket server = new ServerSocket(port);
             server.setSoTimeout(listeningInterval);
             //System.out.println(String.format("Server started! (port: %s)", port));
@@ -50,7 +51,10 @@ public class Server {
                 try {
                     Socket clientSocket = server.accept(); // blocking call
                     //System.out.println("Client excepted:"+clientSocket.toString());
-                    executor.execute(() -> clientHandle(clientSocket));
+                    //executor.execute(() -> clientHandle(clientSocket));
+                    executor.execute(new Thread(() -> {
+                        clientHandle(clientSocket);
+                    }) );
 
                 } catch (SocketTimeoutException e) {
                 }

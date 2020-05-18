@@ -33,32 +33,41 @@ public class MyDecompressorInputStream extends InputStream {
         for (int i = 0; i <24 ; i++) {
             b[i] = bytes[i];
         }
-        b[24] = (byte) (0); //empty for left
         int loc = 25;
-        byte[] curr4Bytes = new byte[4];
-        int count = 0;
-        //add 4 each time
-        for (int i = 25; i < bytes.length; i++) {
-            if (count<4) {
-                curr4Bytes[count] = bytes[i];
-                count++;
+        //if there is less then 32
+        if (bytes[24]==1){
+            for (int k = loc; k < bytes.length; k++) {
+                b[loc] = bytes[k];
+                loc++;
             }
-            //after 4 bytes, add and start over
-            if (count==4){
-                int currDecNum = convertByteToInt(curr4Bytes);
-                String binaryNum = Integer.toBinaryString(currDecNum);
-                String currBinaryNum = "";
-                int s=0;
-                int curr = binaryNum.length();
-                //adding zero to the beginning of the binary num
-                if(binaryNum.length() <32) {
-                    for (s=0; s < 32-binaryNum.length(); s++) {
-                        currBinaryNum += "0";
-                    }
-                }
-                currBinaryNum +=binaryNum;
 
-                int j=loc;
+        }
+        else {
+            b[24] = (byte) (0); //empty for left
+            byte[] curr4Bytes = new byte[4];
+            int count = 0;
+            //add 4 each time
+            for (int i = 25; i < bytes.length; i++) {
+                if (count < 4) {
+                    curr4Bytes[count] = bytes[i];
+                    count++;
+                }
+                //after 4 bytes, add and start over
+                if (count == 4) {
+                    int currDecNum = convertByteToInt(curr4Bytes);
+                    String binaryNum = Integer.toBinaryString(currDecNum);
+                    String currBinaryNum = "";
+                    int s = 0;
+                    int curr = binaryNum.length();
+                    //adding zero to the beginning of the binary num
+                    if (binaryNum.length() < 32) {
+                        for (s = 0; s < 32 - binaryNum.length(); s++) {
+                            currBinaryNum += "0";
+                        }
+                    }
+                    currBinaryNum += binaryNum;
+
+                    int j = loc;
                 /*String[] temp = currBinaryNum.split("");
                 //add to final bytes array the compressed bytes
                 for (String item: temp) {
@@ -66,23 +75,25 @@ public class MyDecompressorInputStream extends InputStream {
                     j++;
                 }*/
 
-                for (int k = 0; k < currBinaryNum.length(); k++) {
-                    String temp2 = ""+currBinaryNum.charAt(k);
-                    int digit = Integer.parseInt(temp2);
-                    b[j] = (byte) digit;
-                    j++;
-                }
-
-                loc = loc+32;
-                count=0;
-                currBinaryNum="";
-                //if there are less then 32 left
-                if (left==b.length-loc && left!=0){
-                    for (int k = i+1; k < bytes.length; k++) {
-                        b[loc] = bytes[k];
-                        loc++;
+                    for (int k = 0; k < currBinaryNum.length(); k++) {
+                        String temp2 = "" + currBinaryNum.charAt(k);
+                        int digit = Integer.parseInt(temp2);
+                        //System.out.println(digit);
+                        b[j] = (byte) digit;
+                        j++;
                     }
-                    return 0;
+
+                    loc = loc + 32;
+                    count = 0;
+                    currBinaryNum = "";
+                    //if there are less then 32 left
+                    if (left == b.length - loc && left != 0) {
+                        for (int k = i + 1; k < bytes.length; k++) {
+                            b[loc] = bytes[k];
+                            loc++;
+                        }
+                        return 0;
+                    }
                 }
             }
         }
