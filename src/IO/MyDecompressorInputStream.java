@@ -21,7 +21,11 @@ public class MyDecompressorInputStream extends InputStream {
         //The size of the compress array
         int left = (finalBytes.length-25)%32; //what's left in the end and we can't compress
         byte[] bytes = new byte[25+left+((finalBytes.length-25-left)/8)];
-        in.read(bytes);
+        try {
+            in.read(bytes);
+        } catch (Exception var8) {
+            return 1;
+        }
         in.close();
 
         //add the first 24 bytes as is
@@ -64,7 +68,7 @@ public class MyDecompressorInputStream extends InputStream {
                 count=0;
                 currBinaryNum="";
                 //if there are less then 32 left
-                if (left==finalBytes.length-loc && left!=0){ /// wrong if!!!!!
+                if (left==finalBytes.length-loc && left!=0){
                     for (int k = i+1; k < bytes.length; k++) {
                         finalBytes[loc] = bytes[k];
                         loc++;

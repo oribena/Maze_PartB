@@ -16,6 +16,8 @@ public class Client {
 
     public void communicateWithServer(){
         try (Socket serverSocket = new Socket(serverIP, serverPort)) {
+            //Thread.sleep(10000);
+
             //System.out.println(String.format("Client is connected to server (IP: %s, Port: %s)",serverIP,serverPort));
             clientStrategy.clientStrategy(serverSocket.getInputStream(),serverSocket.getOutputStream());
             serverSocket.getOutputStream().close();

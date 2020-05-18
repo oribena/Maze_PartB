@@ -9,6 +9,7 @@ import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 
 public class Server {
@@ -24,6 +25,8 @@ public class Server {
         this.listeningInterval = listeningInterval;
         this.serverStrategy = serverStrategy;
         this.stop = false;
+        threadPoolSize = Integer.parseInt(Configurations.getProperty("Server.threadPoolSize"));
+        executor = Executors.newFixedThreadPool(threadPoolSize);
     }
 
     public void start() {
@@ -32,13 +35,13 @@ public class Server {
     }
     private void runServer() {
         try {
-            String temp = Configurations.getProperty("Server.threadPoolSize");
+            /*String temp = Configurations.getProperty("Server.threadPoolSize");
             if (temp != null) {
                  threadPoolSize = Integer.parseInt(Configurations.getProperty("Server.threadPoolSize"));
                  executor = Executors.newFixedThreadPool(threadPoolSize);
             }
             else
-               executor = Executors.newFixedThreadPool(5);
+               executor = Executors.newFixedThreadPool(5);*/
 
             ServerSocket server = new ServerSocket(port);
             server.setSoTimeout(listeningInterval);
@@ -47,14 +50,21 @@ public class Server {
                 try {
                     Socket clientSocket = server.accept(); // blocking call
                     //System.out.println("Client excepted:"+clientSocket.toString());
-                    executor.execute(new Thread(() -> {
-                        clientHandle(clientSocket);
-                    }) );
+                    executor.execute(() -> clientHandle(clientSocket));
 
                 } catch (SocketTimeoutException e) {
                 }
             }
             executor.shutdown();
+            /*try { ///// check error
+
+                executor.awaitTermination(1, TimeUnit.HOURS); //wait maximum one hour for all tasks to complete. After one hour, exit.
+
+            } catch (InterruptedException e) {
+
+                System.out.println(String.format("Error await termination for ThreadPool", e));
+
+            }*/
             server.close();
         } catch (IOException e) {
         }
