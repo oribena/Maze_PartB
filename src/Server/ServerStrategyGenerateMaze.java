@@ -20,7 +20,8 @@ public class ServerStrategyGenerateMaze implements IServerStrategy {
             int cols = RowsCols[1];
 
             AMazeGenerator mazeGenerator;
-            if (Configurations.getProperty("MazeGenerator")=="SimpleMazeGenerator")
+            String maze2 = Configurations.getProperty("MazeGenerator");
+            if (maze2.equals("SimpleMazeGenerator"))
                 mazeGenerator = new SimpleMazeGenerator();
             else
                 mazeGenerator = new MyMazeGenerator();

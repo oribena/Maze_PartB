@@ -47,7 +47,7 @@ public abstract class AMazeGenerator implements IMazeGenerator {
         //if end and start on the same edge/side
         while (row == startPos.getRowIndex() || col == startPos.getColumnIndex()){
             row = (int) (Math.random() * (rows));
-            col = (int) (Math.random() * (rows));
+            col = (int) (Math.random() * (columns));
         }
         endPos = new Position(row, col);
 

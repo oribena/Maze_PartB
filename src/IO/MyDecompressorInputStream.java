@@ -21,12 +21,15 @@ public class MyDecompressorInputStream extends InputStream {
     public int read(byte[] b) throws IOException {
         //The size of the compress array
         int left = (b.length-25)%32; //what's left in the end and we can't compress
-        byte[] bytes = new byte[25+left+((b.length-25-left)/8)];
-        try {
-            in.read(bytes);
-        } catch (Exception var8) {
-            return 1;
+        byte[] bytes;
+        if ((b.length-25)<32){
+            bytes = new byte[29];
         }
+        else {
+            bytes = new byte[25+left+((b.length-25-left)/8)];
+        }
+
+        in.read(bytes);
         in.close();
 
         //add the first 24 bytes as is
@@ -35,14 +38,6 @@ public class MyDecompressorInputStream extends InputStream {
         }
         int loc = 25;
         //if there is less then 32
-        if (bytes[24]==1){
-            for (int k = loc; k < bytes.length; k++) {
-                b[loc] = bytes[k];
-                loc++;
-            }
-
-        }
-        else {
             b[24] = (byte) (0); //empty for left
             byte[] curr4Bytes = new byte[4];
             int count = 0;
@@ -60,7 +55,12 @@ public class MyDecompressorInputStream extends InputStream {
                     int s = 0;
                     int curr = binaryNum.length();
                     //adding zero to the beginning of the binary num
-                    if (binaryNum.length() < 32) {
+                    if(b.length-25<32 && binaryNum.length()<(b.length-25)){
+                        for (s = 0; s < (b.length-25) - binaryNum.length(); s++) {
+                            currBinaryNum += "0";
+                        }
+                    }
+                    else if (binaryNum.length() < 32 && b.length-25>=32) {
                         for (s = 0; s < 32 - binaryNum.length(); s++) {
                             currBinaryNum += "0";
                         }
@@ -68,20 +68,20 @@ public class MyDecompressorInputStream extends InputStream {
                     currBinaryNum += binaryNum;
 
                     int j = loc;
-                /*String[] temp = currBinaryNum.split("");
+                String[] temp = currBinaryNum.split("");
                 //add to final bytes array the compressed bytes
                 for (String item: temp) {
                     b[j] = Byte.parseByte(item);
                     j++;
-                }*/
+                }
 
-                    for (int k = 0; k < currBinaryNum.length(); k++) {
+                   /* for (int k = 0; k < currBinaryNum.length(); k++) {
                         String temp2 = "" + currBinaryNum.charAt(k);
                         int digit = Integer.parseInt(temp2);
                         //System.out.println(digit);
                         b[j] = (byte) digit;
                         j++;
-                    }
+                    }*/
 
                     loc = loc + 32;
                     count = 0;
@@ -96,7 +96,6 @@ public class MyDecompressorInputStream extends InputStream {
                     }
                 }
             }
-        }
         return 0;
     }
 

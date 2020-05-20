@@ -5,6 +5,7 @@ import java.util.Properties;
 public class Configurations {
 
     private Properties configFile;
+    private static Configurations instance=new Configurations();
 
     private Configurations() {
         configFile = new Properties();
@@ -14,9 +15,6 @@ public class Configurations {
             eta.printStackTrace();
         }
     }
-
-    private static Configurations instance=new Configurations();
-
     public static Configurations getInstance() {
         return instance;
     }

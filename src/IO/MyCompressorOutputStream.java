@@ -20,7 +20,13 @@ public class MyCompressorOutputStream extends OutputStream {
 
     public void write(byte[] bytes) throws IOException {
         int left = (bytes.length-25)%32; //what's left in the end and we can't compress
-        byte[] finalBytes = new byte[25+left+((bytes.length-25-left)/8)]; //TODO: check
+        byte[] finalBytes;
+        if ((bytes.length-25)<32){
+            finalBytes = new byte[29]; //TODO: check
+        }
+        else {
+            finalBytes = new byte[25+left+((bytes.length-25-left)/8)];
+        }
         //add the first 24 bytes as is
         for (int i = 0; i <24 ; i++) {
             finalBytes[i] = bytes[i];
@@ -29,52 +35,42 @@ public class MyCompressorOutputStream extends OutputStream {
         int loc = 25;
         int count = 0;
         String test = "";
-        //less then 32 in mat
-        if (bytes.length-25<32){
-            for (int k = loc; k < bytes.length; k++) {
-                finalBytes[loc] = bytes[k];
-                loc++;
-            }
-            finalBytes[24]=(byte)1;
-        }
-        else {
+
+        for (int i = 25; i < bytes.length; i++) {
             //add 32 each time
-            for (int i = 25; i < bytes.length; i++) {
-                if (count < 32) {
-                    test += Byte.toString(bytes[i]);
-                    count++;
+            if (count < 32 || bytes.length-25<32) {
+                test += Byte.toString(bytes[i]);
+                count++;
+            }
+            //after 32 bytes, add and start over
+            if (count == 32 || (bytes.length-25<32 && count==bytes.length-25)) {
+
+                int dec = (int) Long.parseLong(test, 2);
+                byte[] currFinalBytes = convertIntToByte(dec);
+
+                int j = 0;
+                //add to final bytes array the compressed bytes
+                for (int k = loc; k < loc + 4; k++) {
+                    finalBytes[k] = currFinalBytes[j];
+                    j++;
                 }
-                //after 32 bytes, add and start over
-                if (count == 32) {
-
-                    int dec = (int) Long.parseLong(test, 2);
-                    byte[] currFinalBytes = convertIntToByte(dec);
-
-                    int j = 0;
-                    //add to final bytes array the compressed bytes
-                    for (int k = loc; k < loc + 4; k++) {
-                        finalBytes[k] = currFinalBytes[j];
-                        j++;
+                loc = loc + 4;
+                count = 0;
+                test = "";
+                //if there are less then 32 left
+                if (left == finalBytes.length - loc && left != 0 && !(bytes.length-25<32)) {
+                    finalBytes[24] = (byte) left;
+                    for (int k = i + 1; k < bytes.length; k++) {
+                        finalBytes[loc] = bytes[k];
+                        loc++;
                     }
-                    loc = loc + 4;
-                    count = 0;
-                    test = "";
-                    //if there are less then 32 left
-                    if (left == finalBytes.length - loc && left != 0) {
-                        finalBytes[24] = (byte) left;
-                        for (int k = i + 1; k < bytes.length; k++) {
-                            finalBytes[loc] = bytes[k];
-                            loc++;
-                        }
-                        break;
-                    }
+                    break;
                 }
             }
         }
-        if( out instanceof ObjectOutputStream){
+        if (out instanceof ObjectOutputStream) {
             ((ObjectOutputStream) out).writeObject((finalBytes));
-        }
-        else
+        } else
             out.write(finalBytes);
         out.flush();
         out.close();

@@ -10,11 +10,11 @@ import java.io.*;
 import java.util.ArrayList;
 
 public class ServerStrategySolveSearchProblem implements IServerStrategy {
-    int amount;
+    //int amount;
     ArrayList<Position[]> startEndSize;
 
     public ServerStrategySolveSearchProblem() {
-        this.amount = 0;
+        //this.amount = 0;
         startEndSize = new ArrayList<Position[]>();
     }
 
@@ -33,15 +33,13 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
                 sol = newSol(maze);
             }
             to.writeObject(sol);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
 
-    private Solution solFound(Maze maze) throws IOException {
+    private synchronized Solution solFound(Maze maze) throws IOException {
         try {
             String tempDirectoryPath = System.getProperty("java.io.tmpdir");
             //System.out.println(tempDirectoryPath);
@@ -59,6 +57,8 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
                         Object sol = new ObjectInputStream(fisS).readObject();
                         return (Solution)sol;
                         }
+                    else
+                        return null;
                     }
                 }
         } catch (ClassNotFoundException e) {
@@ -69,45 +69,30 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
     }
 
 
-    private Solution newSol(Maze maze)  {
+    private synchronized Solution newSol(Maze maze)  {
 
         String tempDirectoryPath = System.getProperty("java.io.tmpdir");
 
         try {
-            FileOutputStream mazeFile=new FileOutputStream(tempDirectoryPath+"mazeNum"+amount);
+            FileOutputStream mazeFile=new FileOutputStream(tempDirectoryPath+"mazeNum"+startEndSize.size());
             ObjectOutputStream out=new ObjectOutputStream(mazeFile);
             out.writeObject(maze);
         } catch (IOException e) {
             e.printStackTrace();
         }
         ISearchingAlgorithm solver;
-
-        if (Configurations.getProperty("SearchingAlgorithm")=="BestFirstSearch")
+        String sol = Configurations.getProperty("SearchingAlgorithm");
+        if (sol.equals("BestFirstSearch"))
             solver = new BestFirstSearch();
-        else if (Configurations.getProperty("SearchingAlgorithm")=="DepthFirstSearch")
+        else if (sol.equals("DepthFirstSearch"))
             solver = new DepthFirstSearch();
         else
             solver = new BreadthFirstSearch();
 
-//        switch (Configurations.getProperty("SearchingAlgorithm")) {
-//            case "BestFirstSearch":
-//                solver = new BestFirstSearch();
-//                break;
-//            case "DepthFirstSearch":
-//                solver = new DepthFirstSearch();
-//                break;
-//            case "BreadthFirstSearch":
-//                solver = new BreadthFirstSearch();
-//                break;
-//            default:
-//                solver = new BreadthFirstSearch();
-//                break;
-//        }
-
         SearchableMaze newMaze=new SearchableMaze(maze);
         Solution solution= solver.solve(newMaze);
         try {
-            FileOutputStream solveFile=new FileOutputStream(tempDirectoryPath+"solutionNum"+amount);
+            FileOutputStream solveFile=new FileOutputStream(tempDirectoryPath+"solutionNum"+startEndSize.size());
             ObjectOutputStream out=new ObjectOutputStream(solveFile);
             out.writeObject(solution);
             Position[] newData = new Position[3];
@@ -118,7 +103,7 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        amount++;
+        //amount++;
         return solution;
     }
 }
