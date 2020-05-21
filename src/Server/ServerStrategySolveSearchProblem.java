@@ -8,19 +8,20 @@ import algorithms.search.*;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServerStrategySolveSearchProblem implements IServerStrategy {
-    //int amount;
+     AtomicInteger amount;
     ArrayList<Position[]> startEndSize;
 
     public ServerStrategySolveSearchProblem() {
-        //this.amount = 0;
+        amount = new AtomicInteger(0);
         startEndSize = new ArrayList<Position[]>();
     }
 
 
     @Override
-    public void clientHandler(InputStream in, OutputStream out) throws IOException {
+    public synchronized void clientHandler(InputStream in, OutputStream out) throws IOException {
         try {
             ObjectInputStream from = new ObjectInputStream(in);
             ObjectOutputStream to = new ObjectOutputStream(out);
@@ -39,7 +40,7 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
     }
 
 
-    private synchronized Solution solFound(Maze maze) throws IOException {
+    private Solution solFound(Maze maze) throws IOException {
         try {
             String tempDirectoryPath = System.getProperty("java.io.tmpdir");
             //System.out.println(tempDirectoryPath);
@@ -69,12 +70,12 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
     }
 
 
-    private synchronized Solution newSol(Maze maze)  {
+    private Solution newSol(Maze maze)  {
 
         String tempDirectoryPath = System.getProperty("java.io.tmpdir");
 
         try {
-            FileOutputStream mazeFile=new FileOutputStream(tempDirectoryPath+"mazeNum"+startEndSize.size());
+            FileOutputStream mazeFile=new FileOutputStream(tempDirectoryPath+"mazeNum"+amount);
             ObjectOutputStream out=new ObjectOutputStream(mazeFile);
             out.writeObject(maze);
         } catch (IOException e) {
@@ -92,7 +93,7 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
         SearchableMaze newMaze=new SearchableMaze(maze);
         Solution solution= solver.solve(newMaze);
         try {
-            FileOutputStream solveFile=new FileOutputStream(tempDirectoryPath+"solutionNum"+startEndSize.size());
+            FileOutputStream solveFile=new FileOutputStream(tempDirectoryPath+"solutionNum"+amount);
             ObjectOutputStream out=new ObjectOutputStream(solveFile);
             out.writeObject(solution);
             Position[] newData = new Position[3];
@@ -103,7 +104,7 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //amount++;
+        amount.incrementAndGet();
         return solution;
     }
 }

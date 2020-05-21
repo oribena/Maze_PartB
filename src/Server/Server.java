@@ -34,14 +34,6 @@ public class Server {
     }
     private void runServer() {
         try {
-            /*String temp = Configurations.getProperty("Server.threadPoolSize");
-            if (temp != null) {
-                 threadPoolSize = Integer.parseInt(Configurations.getProperty("Server.threadPoolSize"));
-                 executor = Executors.newFixedThreadPool(threadPoolSize);
-            }
-            else
-               executor = Executors.newFixedThreadPool(5);*/
-
             this.threadPoolSize = Integer.parseInt(Configurations.getProperty("Server.threadPoolSize"));
             this.executor = Executors.newFixedThreadPool(threadPoolSize);
             ServerSocket server = new ServerSocket(port);
@@ -51,10 +43,10 @@ public class Server {
                 try {
                     Socket clientSocket = server.accept(); // blocking call
                     //System.out.println("Client excepted:"+clientSocket.toString());
-                    //executor.execute(() -> clientHandle(clientSocket));
-                    executor.execute(new Thread(() -> {
-                        clientHandle(clientSocket);
-                    }) );
+                    executor.execute(() -> clientHandle(clientSocket));
+//                    executor.execute(new Thread(() -> {
+//                        clientHandle(clientSocket);
+//                    }) );
 
                 } catch (SocketTimeoutException e) {
                 }

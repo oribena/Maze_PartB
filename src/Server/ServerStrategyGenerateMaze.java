@@ -26,19 +26,6 @@ public class ServerStrategyGenerateMaze implements IServerStrategy {
             else
                 mazeGenerator = new MyMazeGenerator();
 
-//            AMazeGenerator mazeGenerator;
-//            switch (Configurations.getProperty("MazeGenerator")) {
-//                case "MyMazeGenerator":
-//                    mazeGenerator = new MyMazeGenerator();
-//                    break;
-//                case "SimpleMazeGenerator":
-//                    mazeGenerator = new SimpleMazeGenerator();
-//                    break;
-//                default:
-//                    mazeGenerator = new MyMazeGenerator();
-//                    break;
-//            }
-
             Maze maze = mazeGenerator.generate(rows, cols);
             OutputStream compressed = new MyCompressorOutputStream(toClient);
             compressed.write(maze.toByteArray());
