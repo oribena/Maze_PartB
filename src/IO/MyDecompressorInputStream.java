@@ -20,13 +20,13 @@ public class MyDecompressorInputStream extends InputStream {
     @Override
     public int read(byte[] b) throws IOException {
         //The size of the compress array
-        int left = (b.length-25)%32; //what's left in the end and we can't compress
+        int left = (b.length-24)%32; //what's left in the end and we can't compress
         byte[] bytes;
-        if ((b.length-25)<32){
-            bytes = new byte[29];
+        if ((b.length-24)<32){
+            bytes = new byte[28];
         }
         else {
-            bytes = new byte[25+left+((b.length-25-left)/8)];
+            bytes = new byte[24+left+((b.length-24-left)/8)];
         }
 
         in.read(bytes);
@@ -36,13 +36,13 @@ public class MyDecompressorInputStream extends InputStream {
         for (int i = 0; i <24 ; i++) {
             b[i] = bytes[i];
         }
-        int loc = 25;
+        int loc = 24;
         //if there is less then 32
-            b[24] = (byte) (0); //empty for left
+            //b[24] = (byte) (0); //empty for left
             byte[] curr4Bytes = new byte[4];
             int count = 0;
             //add 4 each time
-            for (int i = 25; i < bytes.length; i++) {
+            for (int i = 24; i < bytes.length; i++) {
                 if (count < 4) {
                     curr4Bytes[count] = bytes[i];
                     count++;
@@ -55,12 +55,12 @@ public class MyDecompressorInputStream extends InputStream {
                     int s = 0;
                     int curr = binaryNum.length();
                     //adding zero to the beginning of the binary num
-                    if(b.length-25<32 && binaryNum.length()<(b.length-25)){
-                        for (s = 0; s < (b.length-25) - binaryNum.length(); s++) {
+                    if(b.length-24<32 && binaryNum.length()<(b.length-24)){
+                        for (s = 0; s < (b.length-24) - binaryNum.length(); s++) {
                             currBinaryNum += "0";
                         }
                     }
-                    else if (binaryNum.length() < 32 && b.length-25>=32) {
+                    else if (binaryNum.length() < 32 && b.length-24>=32) {
                         for (s = 0; s < 32 - binaryNum.length(); s++) {
                             currBinaryNum += "0";
                         }

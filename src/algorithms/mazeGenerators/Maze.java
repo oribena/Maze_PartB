@@ -13,10 +13,16 @@ public class Maze implements Serializable {
     public Maze(int[][] mat, Position start, Position end) {
         this.start = start;
         this.end = end;
-        this.mat = mat;
+        this.mat = new int[mat.length][mat[0].length];
+        for (int i = 0; i < mat.length; i++) {
+            for (int g = 0; g < mat[0].length; g++) {
+                this.mat[i][g] = mat[i][g];
+            }
+        }
     }
 
-    public Maze(byte[] byteArray) {
+    public Maze(byte[] byteArray)
+    {
         byte[] curr4Bytes = new byte[4];
         int j=0;
         for (int i = 0; i < 4; i++) {
@@ -57,22 +63,22 @@ public class Maze implements Serializable {
         int endCol = convertByteToInt(curr4Bytes);
 
         //create start and end
-        Position start = new Position(startRow,startCol);
-        Position end = new Position(endRow,endCol);
+        start = new Position(startRow,startCol);
+        end = new Position(endRow,endCol);
         // create mat data
         int temp = 0;
-        int[][] mat = new int[rows][cols];
-        int k = 25;
+        mat = new int[rows][cols];
+        int k = 24;
         for (int i = 0; i < rows; i++) {
-            for (j = 0; j < cols; j++) {
-                mat[i][j] = (byteArray[k]);
+            for (int g = 0; g < cols; g++) {
+                mat[i][g] = byteArray[k];
                 k++;
             }
         }
-        //initialize
-        this.start = start;
-        this.end = end;
-        this.mat = mat;
+//        //initialize
+//        this.start = start;
+//        this.end = end;
+//        this.mat = mat;
     }
 
     public int[][] getMat() {
@@ -122,7 +128,7 @@ public class Maze implements Serializable {
     public byte[] toByteArray() {
         int rows = mat.length;
         int cols = mat[0].length;
-        byte[] byteArray = new byte[25 + (rows * cols)];
+        byte[] byteArray = new byte[24 + (rows * cols)];
         byte[] bytesOfRows = convertIntToByte(rows);
         byte[] bytesOfCols = convertIntToByte(cols);
         byte[] bytesOfStartRow = convertIntToByte(start.getRowIndex());
@@ -160,12 +166,12 @@ public class Maze implements Serializable {
             byteArray[i] = bytesOfGoalCol[j];
             j++;
         }
-        byteArray[24] = (byte) (0); //empty for left
+        //byteArray[24] = (byte) (0); //empty for left
         // add the rest of the bytes - the mat
-        int k = 25;
+        int k = 24;
         for (int i = 0; i < rows; i++) {
             for (j = 0; j < cols; j++) {
-                byteArray[k] = (byte) (mat[i][j]);  ////TODO: check
+                byteArray[k] = (byte) (mat[i][j]);
                 k++;
             }
         }

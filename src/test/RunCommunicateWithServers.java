@@ -25,19 +25,30 @@ public class RunCommunicateWithServers {
         //Starting servers
         solveSearchProblemServer.start();
         mazeGeneratingServer.start();
+//
+//        for (int i = 0; i < 5; i++) {
 
-        for (int i = 0; i < 2; i++) {
-            CommunicateWithServer_MazeGenerating();
-            CommunicateWithServer_MazeGenerating();
-            CommunicateWithServer_MazeGenerating();
-            CommunicateWithServer_MazeGenerating();
-            CommunicateWithServer_SolveSearchProblem();
-            CommunicateWithServer_SolveSearchProblem();
-            CommunicateWithServer_SolveSearchProblem();
-            CommunicateWithServer_SolveSearchProblem();
-        }
-            mazeGeneratingServer.stop();
-            solveSearchProblemServer.stop();
+        CommunicateWithServer_MazeGenerating();
+        CommunicateWithServer_SolveSearchProblem();
+
+
+//        }
+//        CommunicateWithServer_MazeGenerating();
+//        CommunicateWithServer_SolveSearchProblem();
+//        CommunicateWithServer_MazeGenerating();
+//        CommunicateWithServer_SolveSearchProblem();
+//        CommunicateWithServer_MazeGenerating();
+//        CommunicateWithServer_SolveSearchProblem();
+//        CommunicateWithServer_MazeGenerating();
+//        CommunicateWithServer_SolveSearchProblem();
+//        CommunicateWithServer_MazeGenerating();
+//        CommunicateWithServer_SolveSearchProblem();
+//        CommunicateWithServer_MazeGenerating();
+//        CommunicateWithServer_SolveSearchProblem();
+
+
+        mazeGeneratingServer.stop();
+        solveSearchProblemServer.stop();
 
         //stringReverserServer.start();
         //Communicating with servers
@@ -59,16 +70,20 @@ public class RunCommunicateWithServers {
                         ObjectOutputStream toServer = new ObjectOutputStream(outToServer);
                         ObjectInputStream fromServer = new ObjectInputStream(inFromServer);
                         toServer.flush();
-                        int[] mazeDimensions = new int[]{10, 10};
+                        int[] mazeDimensions = new int[]{105, 106};
                         toServer.writeObject(mazeDimensions); //send maze dimensions to server toServer.flush();
                         byte[] compressedMaze = (byte[]) fromServer.readObject();
                         //read generated maze (compressed with MyCompressor) from server
                         InputStream is = new MyDecompressorInputStream(new ByteArrayInputStream(compressedMaze));
-                        byte[] decompressedMaze = new byte[125 /*CHANGE SIZE ACCORDING TO YOU MAZE SIZE*/]; //allocating byte[] for the decompressed maze –
+                        byte[] decompressedMaze = new byte[11155 /*CHANGE SIZE ACCORDING TO YOU MAZE SIZE*/]; //allocating byte[] for the decompressed maze –
                         is.read(decompressedMaze);
                         //Fill decompressedMaze with bytes
                         Maze maze = new Maze(decompressedMaze);
                         maze.print();
+                        System.out.println("\n");
+                        System.out.println("***********************************************");
+                        System.out.println("\n");
+
                     } catch (Exception e) {
                         //System.out.println("wrong");
                         e.printStackTrace(System.out);
@@ -91,13 +106,13 @@ public class RunCommunicateWithServers {
                         ObjectInputStream fromServer = new ObjectInputStream(inFromServer);
                         toServer.flush();
                         MyMazeGenerator mg = new MyMazeGenerator();
-                        Maze maze = mg.generate(10, 10);
+                        Maze maze = mg.generate(105, 106);
                         /////////////////
 //                        String tempDirectoryPath = System.getProperty("java.io.tmpdir");
 //                        FileInputStream fisM =  new FileInputStream(tempDirectoryPath + "mazeNum" + 0);
 //                        ObjectInputStream mazeFromFile = new ObjectInputStream(fisM);
 //                        Maze maze2 = (Maze)mazeFromFile.readObject();
-                        System.out.println("\n");
+                        //System.out.println("\n");
                         maze.print();
                         toServer.writeObject(maze); //send maze to server
                         toServer.flush();
