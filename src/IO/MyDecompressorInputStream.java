@@ -28,7 +28,6 @@ public class MyDecompressorInputStream extends InputStream {
         else {
             bytes = new byte[24+left+((b.length-24-left)/8)];
         }
-
         in.read(bytes);
         in.close();
 
