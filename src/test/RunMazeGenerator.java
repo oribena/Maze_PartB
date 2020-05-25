@@ -18,7 +18,7 @@ public class RunMazeGenerator {
         System.out.println(String.format("Maze generation time(ms): %s",
                 mazeGenerator.measureAlgorithmTimeMillis(6/*rows*/,6/*columns*/)));
         // generate another maze
-        Maze maze = mazeGenerator.generate(200/*rows*/, 106/*columns*/);
+        Maze maze = mazeGenerator.generate(5/*rows*/, 5/*columns*/);
 
         //byte savedMazeBytes[] = new byte[0];
         //savedMazeBytes = new byte[maze.toByteArray().length];

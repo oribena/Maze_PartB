@@ -1,3 +1,5 @@
+
+
 package IO;
 
 import java.io.IOException;
@@ -28,9 +30,11 @@ public class MyDecompressorInputStream extends InputStream {
         else {
             bytes = new byte[24+left+((b.length-24-left)/8)];
         }
+
         in.read(bytes);
         in.close();
-
+        int dif = (b.length-24);
+        int last = (b.length-24);
         //add the first 24 bytes as is
         for (int i = 0; i <24 ; i++) {
             b[i] = bytes[i];
@@ -48,18 +52,19 @@ public class MyDecompressorInputStream extends InputStream {
                 }
                 //after 4 bytes, add and start over
                 if (count == 4) {
+                    last = last-32;
                     int currDecNum = convertByteToInt(curr4Bytes);
                     String binaryNum = Integer.toBinaryString(currDecNum);
                     String currBinaryNum = "";
                     int s = 0;
                     int curr = binaryNum.length();
                     //adding zero to the beginning of the binary num
-                    if(b.length-24<32 && binaryNum.length()<(b.length-24)){
-                        for (s = 0; s < (b.length-24) - binaryNum.length(); s++) {
+                    if(dif<32 && binaryNum.length()<dif){
+                        for (s = 0; s < dif - binaryNum.length(); s++) {
                             currBinaryNum += "0";
                         }
                     }
-                    else if (binaryNum.length() < 32 && b.length-24>=32) {
+                    else if (binaryNum.length() < 32 && dif>=32) {
                         for (s = 0; s < 32 - binaryNum.length(); s++) {
                             currBinaryNum += "0";
                         }
@@ -73,20 +78,11 @@ public class MyDecompressorInputStream extends InputStream {
                     b[j] = Byte.parseByte(item);
                     j++;
                 }
-
-                   /* for (int k = 0; k < currBinaryNum.length(); k++) {
-                        String temp2 = "" + currBinaryNum.charAt(k);
-                        int digit = Integer.parseInt(temp2);
-                        //System.out.println(digit);
-                        b[j] = (byte) digit;
-                        j++;
-                    }*/
-
                     loc = loc + 32;
                     count = 0;
                     currBinaryNum = "";
                     //if there are less then 32 left
-                    if (left == b.length - loc && left != 0) {
+                    if (last<32 && left != 0) {
                         for (int k = i + 1; k < bytes.length; k++) {
                             b[loc] = bytes[k];
                             loc++;

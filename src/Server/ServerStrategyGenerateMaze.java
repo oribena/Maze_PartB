@@ -19,17 +19,17 @@ public class ServerStrategyGenerateMaze implements IServerStrategy {
             int rows = RowsCols[0];
             int cols = RowsCols[1];
 
-            AMazeGenerator mazeGenerator;
-            String maze2 = Configurations.getProperty("MazeGenerator");
-            if (maze2.equals("SimpleMazeGenerator"))
-                mazeGenerator = new SimpleMazeGenerator();
-            else
-                mazeGenerator = new MyMazeGenerator();
+            AMazeGenerator mazeGenerator= new MyMazeGenerator();
+//            String maze2 = Configurations.getProperty("MazeGenerator");
+//            if (maze2.equals("MyMazeGenerator"))
+//                mazeGenerator = new MyMazeGenerator();
+//            else
+//                mazeGenerator = new SimpleMazeGenerator();
 
             Maze maze = mazeGenerator.generate(rows, cols);
             OutputStream compressed = new MyCompressorOutputStream(toClient);
             compressed.write(maze.toByteArray());
-            out.flush(); // delete
+            out.flush();
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

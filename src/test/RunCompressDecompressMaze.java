@@ -1,24 +1,28 @@
 package test;
+
 import IO.MyCompressorOutputStream;
 import IO.MyDecompressorInputStream;
 import algorithms.mazeGenerators.AMazeGenerator;
 import algorithms.mazeGenerators.Maze;
 import algorithms.mazeGenerators.MyMazeGenerator;
+
 import java.io.*;
 import java.util.Arrays;
 
-public class RunCompressDecompressMaze {
 
+public class RunCompressDecompressMaze {
     public static void main(String[] args) {
         String mazeFileName = "savedMaze.maze";
         AMazeGenerator mazeGenerator = new MyMazeGenerator();
-        Maze maze = mazeGenerator.generate(2, 100); //Generate new maze
-        try {             // save maze to a file
+        Maze maze = mazeGenerator.generate(1000, 1000); //Generate new maze
+        try {
+            // save maze to a file
             OutputStream out = new MyCompressorOutputStream(new FileOutputStream(mazeFileName));
             out.write(maze.toByteArray());
             out.flush();
             out.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
         byte savedMazeBytes[] = new byte[0];
@@ -27,16 +31,21 @@ public class RunCompressDecompressMaze {
             InputStream in = new MyDecompressorInputStream(new FileInputStream(mazeFileName));
             savedMazeBytes = new byte[maze.toByteArray().length];
             in.read(savedMazeBytes);
-            //byte[] one = savedMazeBytes;
             in.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
         Maze loadedMaze = new Maze(savedMazeBytes);
-        //byte[] one = loadedMaze.toByteArray();
-        //byte[] two =maze.toByteArray();
-        boolean areMazesEquals = Arrays.equals(loadedMaze.toByteArray(), maze.toByteArray());
-        System.out.println(String.format("Mazes equal: %s", areMazesEquals));
-        //maze should be equal to loadedMaze
+        boolean areMazesEquals = Arrays.equals(loadedMaze.toByteArray(),maze.toByteArray());
+        System.out.println(String.format("Mazes equal: %s",areMazesEquals)); //maze should be equal to loadedMaze
     }
 }
+
+
+
+
+
+
+
+

@@ -18,13 +18,14 @@ public class Server {
     private IServerStrategy serverStrategy;//The strategy for handling clients
     private volatile boolean stop;
     private ExecutorService executor;
-    int threadPoolSize;
+    //int threadPoolSize;
 
     public Server(int port, int listeningInterval, IServerStrategy serverStrategy) {
         this.port = port;
         this.listeningInterval = listeningInterval;
         this.serverStrategy = serverStrategy;
         this.stop = false;
+        this.executor = Executors.newFixedThreadPool(3);
 
     }
 
@@ -34,8 +35,9 @@ public class Server {
     }
     private void runServer() {
         try {
-            this.threadPoolSize = Integer.parseInt(Configurations.getProperty("Server.threadPoolSize"));
-            this.executor = Executors.newFixedThreadPool(threadPoolSize);
+            //this.threadPoolSize = Integer.parseInt(Configurations.getProperty("Server.threadPoolSize"));
+            //this.executor = Executors.newFixedThreadPool(threadPoolSize);
+
             ServerSocket server = new ServerSocket(port);
             server.setSoTimeout(listeningInterval);
             //System.out.println(String.format("Server started! (port: %s)", port));
@@ -44,23 +46,10 @@ public class Server {
                     Socket clientSocket = server.accept(); // blocking call
                     //System.out.println("Client excepted:"+clientSocket.toString());
                     executor.execute(() -> clientHandle(clientSocket));
-//                    executor.execute(new Thread(() -> {
-//                        clientHandle(clientSocket);
-//                    }) );
-
                 } catch (SocketTimeoutException e) {
                 }
             }
             executor.shutdown();
-            /*try { ///// check error
-
-                executor.awaitTermination(1, TimeUnit.HOURS); //wait maximum one hour for all tasks to complete. After one hour, exit.
-
-            } catch (InterruptedException e) {
-
-                System.out.println(String.format("Error await termination for ThreadPool", e));
-
-            }*/
             server.close();
         } catch (IOException e) {
         }
