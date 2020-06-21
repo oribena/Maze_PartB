@@ -18,14 +18,16 @@ public class Server {
     private IServerStrategy serverStrategy;//The strategy for handling clients
     private volatile boolean stop;
     private ExecutorService executor;
-    //int threadPoolSize;
+    int threadPoolSize;
 
     public Server(int port, int listeningInterval, IServerStrategy serverStrategy) {
         this.port = port;
         this.listeningInterval = listeningInterval;
         this.serverStrategy = serverStrategy;
         this.stop = false;
-        this.executor = Executors.newFixedThreadPool(3);
+        this.threadPoolSize = Integer.parseInt(Configurations.getProperty("Server.threadPoolSize"));
+        this.executor = Executors.newFixedThreadPool(threadPoolSize);
+        //this.executor = Executors.newFixedThreadPool(3);
 
     }
 

@@ -7,6 +7,7 @@ import java.util.Arrays;
 public class Maze implements Serializable {
 
     private int[][] mat;
+
     private Position start;
     private Position end;
 
@@ -99,6 +100,15 @@ public class Maze implements Serializable {
 
     public Position getGoalPosition() {
         return end;
+    }
+
+
+    public void setStart(Position start) {
+        this.start = start;
+    }
+
+    public void setEnd(Position end) {
+        this.end = end;
     }
 
     public void print(){

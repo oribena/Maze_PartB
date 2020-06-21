@@ -81,14 +81,14 @@ public class ServerStrategySolveSearchProblem implements IServerStrategy {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ISearchingAlgorithm solver = new BreadthFirstSearch();
-//        String sol = Configurations.getProperty("SearchingAlgorithm");
-//        if (sol.equals("BestFirstSearch"))
-//            solver = new BestFirstSearch();
-//        else if (sol.equals("DepthFirstSearch"))
-//            solver = new DepthFirstSearch();
-//        else
-//            solver = new BreadthFirstSearch();
+        ISearchingAlgorithm solver;
+        String sol = Configurations.getProperty("SearchingAlgorithm");
+        if (sol.equals("BestFirstSearch"))
+            solver = new BestFirstSearch();
+        else if (sol.equals("DepthFirstSearch"))
+            solver = new DepthFirstSearch();
+        else
+            solver = new BreadthFirstSearch();
 
         SearchableMaze newMaze=new SearchableMaze(maze);
         Solution solution= solver.solve(newMaze);
